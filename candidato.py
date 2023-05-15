@@ -10,14 +10,14 @@ etcd = etcd3.client(host='localhost', port=2379)
 
 
 def atualiza_lease():
-    #utiliza as variáveis globais
+    # Utiliza as variáveis globais
     global lider
     global cliente
     global etcd
 
-    #enquanto for o lider
+    # Enquanto for o líder
     while lider == cliente:
-        #atualiza o lease a cada 3 segundos
+        # Atualiza o lease a cada 3 segundos
         time.sleep(3)
         etcd.put(key='/lider', value=cliente, lease=etcd.lease(25))
 
@@ -26,37 +26,37 @@ executando = True
 
 while executando:
 
-    #tenta adicionar uma chave para ser o lider    
+    # Tenta adicionar uma chave para ser o líder
     resultado = etcd.put_if_not_exists(key='/lider', 
                                       value=cliente, lease=etcd.lease(30))
 
-    #se for o lider
+    # Se for o líder
     if resultado:
         print('Eu sou o líder: {}!'.format(cliente))
         lider = cliente
 
-        #inicia a thread para atualizar o lease
+        # Inicia a thread para atualizar o lease
         threading.Thread(target=atualiza_lease).start()
 
-        #espera o usuário apertar algum botão para finalizar
+        # Espera o usuário apertar algum botão para finalizar
         input('Aperte qualquer botão para finalizar...')
-        #finaliza as variáveis, avisando a thread que não é mais o lider
+        # Finaliza as variáveis, avisando a thread que não é mais o lider
         lider = None
         executando = False
         exit(0)
     
-    #se não for o lider
+    # Se não for o líder
     else:
-        #pega o valor da chave lider
+        # Pega o valor da chave líder
         lider = etcd.get('/lider')[0].decode('utf-8')
         print('O líder é {}'.format(lider))
 
-        #enquanto tiver um lider
+        # Enquanto tiver um líder
         while lider:
             time.sleep(5)
-            #verifica se o lider ainda é o mesmo ou se não existe mais
+            # Verifica se o líder ainda é o mesmo ou se não existe mais
             resultado = etcd.get('/lider')
             if resultado[0] == None or resultado[0].decode('utf-8') != lider:
-                #se não for mais o lider, finaliza o loop para tentar ser o lider
+                # Se não for mais o líder, finaliza o loop para tentar ser o líder
                 lider = None
                 break
