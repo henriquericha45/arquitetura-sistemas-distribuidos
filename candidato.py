@@ -33,7 +33,7 @@ while executando:
     #se for o lider
     if resultado:
         print('Eu sou o líder: {}!'.format(cliente))
-        leader = cliente
+        lider = cliente
 
         #inicia a thread para atualizar o lease
         threading.Thread(target=atualiza_lease).start()
