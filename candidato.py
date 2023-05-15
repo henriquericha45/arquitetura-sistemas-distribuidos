@@ -1,6 +1,9 @@
-import threading, etcd3, random, time, hashlib
+import threading
+import etcd3
+import time
+import sys
 
-cliente = str(random.randint(1, 1000000))
+cliente = sys.argv[1]
 lider = None
 lease = None
 etcd = etcd3.client(host='localhost', port=2379)
