@@ -1,7 +1,7 @@
-import threading
-import etcd3
-import time
 import sys
+import etcd3
+import threading
+import time
 
 cliente = sys.argv[1]
 lider = None
@@ -15,10 +15,10 @@ def atualiza_lease():
     global cliente
     global etcd
 
-    # Enquanto for o líder
+    # Enquanto for o líder, atualiza o lease
     while lider == cliente:
         # Atualiza o lease a cada 3 segundos
-        time.sleep(3)
+        time.sleep(1)
         etcd.put(key='/lider', value=cliente, lease=etcd.lease(25))
 
 
